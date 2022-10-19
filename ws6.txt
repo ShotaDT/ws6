@@ -1,0 +1,13 @@
+ws6.sh
+
+#!/bin/bash
+
+DATETIME=$(date +%Y%m%d_%H%M%S)
+grep 0679444815 ~/amazon_reviews_us_Books_v1_02.tsv|cut -f 9 > ~/PRODUCTS/0679444815.txt
+cp ~/PRODUCTS/0679444815.txt > ~/PRODUCTS/0679444815.$DATETIME.txt
+echo '3' >> ~/PRODUCTS/0679444815.$DATETIME.txt
+ln -s ~/PRODUCTS/0679444815.$DATETIME.txt ~/PRODUCTS/0679444815.LATEST.txt
+
+crontab
+* * * * * count=0; total=0; for i in $( awk '{ print $1 }' 0679444815.LATEST.txt );do total=$(echo $total+$i | bc ); ((count++)); done; echo "scale=2; $total / $count" | bc > ~/PRODUCTS/0679444815.AVGRATING.txt 2>&1
+
